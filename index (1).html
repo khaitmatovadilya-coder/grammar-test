@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prepare 2 · Level 3 · Unit 5 Grammar</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1c2033;--mu:#626880;--ac:#3b5bdb;--acx:#fff;--ok:#1a8f4c;--no:#d6336c;--bd:#dfe3ef;--okb:#e6f6ec;--nob:#fde8ef;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161f;--card:#1e2130;--tx:#eceefa;--mu:#9aa1bd;--ac:#7c93ff;--acx:#10131f;--ok:#4cd08a;--no:#ff7aa8;--bd:#33384f;--okb:#17332480;--nob:#3a1f2c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14161f;--card:#1e2130;--tx:#eceefa;--mu:#9aa1bd;--ac:#7c93ff;--acx:#10131f;--ok:#4cd08a;--no:#ff7aa8;--bd:#33384f;--okb:#17332480;--nob:#3a1f2c;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:760px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin:0 0 14px}
+h1{font-size:22px;margin:0 0 6px}h2{font-size:18px;margin:0 0 4px}
+.mu{color:var(--mu);font-size:14px}
+.box{display:flex;flex-wrap:wrap;gap:8px;border:1px dashed var(--bd);border-radius:10px;padding:10px;margin:10px 0}
+.box span{background:var(--bg);border-radius:8px;padding:2px 10px}
+ol{padding-left:22px;margin:10px 0 0}li{margin:0 0 12px}
+input[type=text]{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:4px 8px;min-width:110px;max-width:100%}
+input.wide{display:block;width:100%;margin-top:6px}
+input:focus{outline:2px solid var(--ac)}
+u{text-decoration-thickness:2px}
+.opt{display:inline-flex;gap:4px;vertical-align:baseline;margin:0 2px}
+.opt button{font:inherit;font-size:14px;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:0 8px;cursor:pointer}
+.opt button.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+sup{color:var(--mu);font-weight:600}
+.btn{font:inherit;font-weight:600;background:var(--ac);color:var(--acx);border:0;border-radius:10px;padding:12px 22px;cursor:pointer}
+.btn:disabled{opacity:.5}
+input.nm{display:block;width:100%;margin:12px 0;padding:10px}
+.warn{background:var(--nob);border-radius:10px;padding:10px 12px;margin:12px 0;font-size:14px}
+.big{font-size:56px;font-weight:700;line-height:1;margin:8px 0}
+.r{padding:8px 10px;border-radius:8px;margin:6px 0;font-size:15px}
+.r.ok{background:var(--okb)}.r.no{background:var(--nob)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;padding:6px 0;font-size:14px;color:var(--mu)}
+.hide{display:none}
+</style></head>
+<body><div class="w">
+
+<div id="start" class="card">
+<h1>PREPARE Second Edition · Level 3</h1>
+<div class="mu">Unit 5 · Grammar · 29 вопросов, 1 балл за каждый</div>
+<label for="nm" style="display:block;margin-top:14px">Ваше имя и фамилия</label>
+<input id="nm" class="nm" type="text" placeholder="Например: Айгерим Н." autocomplete="off">
+<div class="warn"><b>Правила.</b> Во время теста нельзя выходить со страницы, переключать вкладки или приложения, сворачивать браузер, обновлять страницу. Если выйдете, <b>все ответы удалятся</b>, тест будет закрыт с результатом 0. Учитель видит ваш прогресс в реальном времени.</div>
+<button class="btn" id="go" disabled>Начать тест</button>
+</div>
+
+<div id="test" class="hide">
+<div class="bar">Не выходите со страницы: ответы будут удалены.</div>
+<div id="qs"></div>
+<button class="btn" id="send">Отправить ответы</button>
+</div>
+
+<div id="end" class="card hide"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const S=[
+{t:'Exercise 1',d:'Complete the sentences and question with the words in the box.',box:['better','harder','more','easily','quietly','the'],type:'gap',ex:'We can’t run faster <u>than</u> Charlie. That’s impossible!',
+ it:[['Dan speaks English __ than I do. He’s the best in the class.',['better']],
+ ['Emma always checks her homework __ carefully than her brother. She doesn’t like making mistakes.',['more']],
+ ['Who dances __ most beautifully in your class?',['the']],
+ ['My cousins make friends more __ than I do.',['easily']],
+ ['Jake studies much __ than I do because he wants to do well.',['harder']],
+ ['On Sunday mornings, I play the piano __ so my family don’t wake up.',['quietly']]]},
+{t:'Exercise 2',d:'Complete the sentences with the words in brackets in the correct form. Add any extra words.',type:'gap',ex:'Dad works <u>more efficiently than</u> his colleagues because he enjoys his job. (efficient)',
+ it:[['I use a computer __ than my brother. I can type fifty words in a minute! (quick)',['more quickly']],
+ ['Our new teacher explains everything __ our old teacher. (simple)',['more simply than']],
+ ['You write __ in our class. Your handwriting is beautiful! (clear)',['the most clearly']],
+ ['My sister did __ in her history test. She always studies very hard. (good)',['the best','best']],
+ ['I can understand you when you speak __. (slow)',['more slowly']],
+ ['My brothers jump and throw __ than any of their classmates. They’re excellent at PE. (easy)',['more easily']]]},
+{t:'Exercise 3',d:'Put the words in the correct order to make sentences.',type:'ord',ex:'tests / never / badly / in / Anna / does → <u>Anna never does badly in tests.</u>',
+ it:[['term / David / well / in / exams / last / did / very / his chemistry',['david did very well in his chemistry exams last term','last term david did very well in his chemistry exams']],
+ ['you / more / learn / when / aren’t / You / efficiently / stressed',['you learn more efficiently when you aren’t stressed','when you aren’t stressed you learn more efficiently']],
+ ['class / sings / his / drama / Adam / worst / the / in',['adam sings the worst in his drama class']],
+ ['to / always / class / arrives / Sara / than / classmates / in / biology / later / her',['sara always arrives to class later than her classmates in biology','sara always arrives later than her classmates in biology class']],
+ ['earliest / class / comes / Who / to / school / in / your',['who comes to school earliest in your class']]]},
+{t:'Exercise 4',d:'Correct the underlined mistakes in the sentences. Write the corrected underlined part.',type:'fix',ex:'Kate speaks <u>polite than</u> her brother. → <u>more politely</u>',
+ it:[['John plays football <u>good</u>.',['well']],
+ ['I study <u>much easier</u> in the library.',['much more easily']],
+ ['You can <u>more quickly eat</u> in this restaurant.',['eat more quickly']],
+ ['My best friend likes <u>best history lessons</u>.',['history lessons best']],
+ ['They did <u>bad</u> in the ICT exam.',['badly']]]},
+{t:'Exercise 5',d:'Choose the correct options to complete Alex’s text.',type:'ch',
+ p:'I always try to do my [best|good] at school because I love learning new things. At my old school, my favourite subjects were maths and physics but now I prefer geography. I study [hard|hardly] every day when we [are having|have] tests but last term I did [worse|worst] than I usually do so I was quite sad. I know I can do much [well|better] so I need to study [more efficiently|more efficient]. I want to take my end-of-year exams and do [good|well]. Today I’m feeling more positive.',
+ a:['best','hard','have','worse','better','more efficiently','well']}
+];
+let items=[],ans={},state='start',t0=0,fs=false;
+let db=null,me=null,sid='',TS=()=>firebase.database.ServerValue.TIMESTAMP;
+try{firebase.initializeApp(FIREBASE_CONFIG);db=firebase.database()}catch(e){}
+function push(p){try{me&&me.update(p)}catch(e){}}
+let pt=0;function prog(){clearTimeout(pt);pt=setTimeout(()=>{if(state!=='testing')return;const a={};items.forEach(it=>{if((ans[it.id]||'').trim())a[it.id]=ans[it.id]});push({answered:Object.keys(a).length,answers:a,updated:TS()})},400)}
+
+function norm(s){return (s||'').toLowerCase().replace(/[’‘`]/g,"'").replace(/[.,!?;:]/g,' ').replace(/\s+/g,' ').trim()}
+function ok(it,v){
+ v=norm(v);if(!v)return false;
+ const A=it.a.map(norm);
+ if(A.includes(v))return true;
+ if(it.s==='Exercise 2'&&v.endsWith(' than')&&!A.some(a=>a.endsWith(' than')))return A.includes(v.slice(0,-5));
+ return false}
+
+function build(){
+ const root=$('#qs');root.innerHTML='';
+ S.forEach(s=>{
+  const c=document.createElement('div');c.className='card';
+  let h='<h2>'+s.t+'</h2><div class="mu">'+s.d+'</div>';
+  if(s.box)h+='<div class="box">'+s.box.map(w=>'<span>'+w+'</span>').join('')+'</div>';
+  if(s.ex)h+='<div class="mu" style="margin-top:8px">Пример: '+s.ex+'</div>';
+  if(s.type==='ch'){
+   let k=0;
+   h+='<p>'+s.p.replace(/\[([^\]]+)\]/g,(m,o)=>{k++;const id='e5_'+k;items.push({id,s:s.t,n:k,a:[s.a[k-1]],q:'Option '+k});
+    return '<sup>'+k+'</sup><span class="opt" data-id="'+id+'">'+o.split('|').map(x=>'<button type="button" data-v="'+x+'">'+x+'</button>').join('')+'</span>'})+'</p>';
+  }else{
+   h+='<ol>'+s.it.map((q,i)=>{
+    const id=s.t+'_'+i;items.push({id,s:s.t,n:i+1,a:q[1],q:q[0].replace(/<[^>]+>/g,'').replace('__','___')});
+    if(s.type==='gap')return '<li>'+q[0].replace('__','<input type="text" data-id="'+id+'" autocomplete="off" autocapitalize="off" spellcheck="false">')+'</li>';
+    return '<li>'+q[0]+'<input class="wide" type="text" data-id="'+id+'" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(s.type==='ord'?'Напишите предложение':'Исправление')+'"></li>'}).join('')+'</ol>';
+  }
+  c.innerHTML=h;root.appendChild(c)});
+ root.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{ans[i.dataset.id]=i.value;prog()}));
+ root.querySelectorAll('.opt').forEach(o=>o.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  o.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));ans[o.dataset.id]=b.dataset.v;prog()}));
+}
+
+$('#nm').addEventListener('input',e=>$('#go').disabled=e.target.value.trim().length<2);
+$('#go').addEventListener('click',async()=>{
+ build();ans={};
+ $('#start').classList.add('hide');$('#test').classList.remove('hide');
+ window.scrollTo(0,0);
+ try{await document.documentElement.requestFullscreen();fs=!!document.fullscreenElement}catch(e){fs=false}
+ state='testing';t0=Date.now();
+ if(db){try{sid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);me=db.ref('sessions/'+sid);
+  me.set({name:$('#nm').value.trim(),status:'testing',answered:0,total:items.length,started:TS(),updated:TS()});
+  me.onDisconnect().update({status:'left',answers:null})}catch(e){}}
+});
+
+function leave(){
+ if(state!=='testing'||Date.now()-t0<1500)return;
+ state='void';push({status:'left',answers:null,score:0,percent:0,updated:TS()});ans={};items=[];
+ $('#qs').innerHTML='';$('#test').classList.add('hide');
+ try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}
+ const e=$('#end');e.classList.remove('hide');
+ e.innerHTML='<h1>Тест закрыт</h1><div class="big" style="color:var(--no)">0 / 29</div><p>Вы вышли со страницы теста, поэтому <b>все ответы удалены</b> и результат не засчитан. Обратитесь к учителю.</p>';
+ window.scrollTo(0,0);
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)leave()});
+window.addEventListener('pagehide',leave);
+window.addEventListener('blur',()=>setTimeout(()=>{if(!document.hasFocus())leave()},200));
+document.addEventListener('fullscreenchange',()=>{if(fs&&state==='testing'&&!document.fullscreenElement)leave()});
+window.addEventListener('beforeunload',e=>{if(state==='testing'){e.preventDefault();e.returnValue=''}});
+['copy','cut','paste','contextmenu'].forEach(ev=>document.addEventListener(ev,e=>{if(state==='testing')e.preventDefault()}));
+
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+$('#send').addEventListener('click',()=>{
+ if(state!=='testing')return;
+ state='done';
+ try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}
+ const name=$('#nm').value.trim();
+ let sc=0,rev='',cur='';
+ items.forEach(it=>{
+  const v=ans[it.id]||'',g=ok(it,v);if(g)sc++;
+  if(it.s!==cur){cur=it.s;rev+='<h2 style="margin-top:16px">'+cur+'</h2>'}
+  rev+='<div class="r '+(g?'ok':'no')+'"><b>'+it.n+'.</b> '+(g?'✓ ':'✗ ')+esc(v||'— нет ответа —')+(g?'':'<br><span class="mu">Правильно: '+esc(it.a[0])+'</span>')+'</div>';
+ });
+ const N=items.length,p=Math.round(sc/N*100);
+ const fin={};items.forEach(it=>{if((ans[it.id]||'').trim())fin[it.id]=ans[it.id]});
+ try{me&&me.onDisconnect().cancel()}catch(e){}
+ push({status:'done',score:sc,percent:p,answered:Object.keys(fin).length,answers:fin,updated:TS()});
+ const msg=p>=85?'Отличный результат!':p>=65?'Хорошо, но есть над чем поработать.':p>=45?'Неплохо, повторите правила сравнения.':'Стоит повторить тему Comparatives & Superlatives, Adverbs.';
+ $('#test').classList.add('hide');
+ const e=$('#end');e.classList.remove('hide');
+ e.innerHTML='<div class="mu">'+esc(name)+' · Unit 5 Grammar</div><div class="big">'+sc+' / '+N+'</div><b>'+p+'%</b> · '+msg+'<div style="margin-top:12px">'+rev+'</div>';
+ window.scrollTo(0,0);
+});
+</script></body></html>

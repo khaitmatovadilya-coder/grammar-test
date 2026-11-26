@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Панель учителя · Unit 5 Grammar</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1c2033;--mu:#626880;--ac:#3b5bdb;--bd:#dfe3ef;--ok:#1a8f4c;--no:#d6336c;--wa:#c77d00;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#14161f;--card:#1e2130;--tx:#eceefa;--mu:#9aa1bd;--ac:#7c93ff;--bd:#33384f;--ok:#4cd08a;--no:#ff7aa8;--wa:#ffb84d;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:900px;margin:0 auto;padding:16px}h1{font-size:22px;margin:0 0 4px}.mu{color:var(--mu);font-size:14px}
+.sum{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.sum div{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 14px;min-width:110px}
+.sum b{display:block;font-size:24px}
+.row{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin:8px 0;cursor:pointer}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.nm{font-weight:600;flex:1;min-width:140px}
+.tag{font-size:13px;border-radius:99px;padding:1px 10px;border:1px solid currentColor}
+.t-testing{color:var(--wa)}.t-done{color:var(--ok)}.t-left{color:var(--no)}
+.pb{height:8px;background:var(--bd);border-radius:6px;margin-top:8px;overflow:hidden}.pb i{display:block;height:100%;background:var(--ac)}
+.det{display:none;margin-top:10px;font-size:14px;border-top:1px solid var(--bd);padding-top:8px}.open .det{display:block}
+.det div{padding:2px 0}.det b{color:var(--mu);margin-right:6px}
+button{font:inherit;background:none;color:var(--no);border:1px solid var(--no);border-radius:8px;padding:6px 12px;cursor:pointer;margin-top:14px}
+</style></head><body><div class="w">
+<h1>Панель учителя · Unit 5 Grammar</h1>
+<div class="mu" id="st">Подключение…</div>
+<div class="sum" id="sum"></div>
+<div id="list"></div>
+<button id="clr">Очистить все результаты</button>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const L={testing:'Проходит',done:'Сдал',left:'Вышел'};
+let off=0,data={},open=new Set();
+function ago(t){if(!t)return'';const s=Math.max(0,Math.round((Date.now()+off-t)/1000));return s<10?'только что':s<60?s+' с назад':Math.round(s/60)+' мин назад'}
+function lab(k){let m=k.match(/^Exercise (\d)_(\d+)$/);if(m)return[+m[1],+m[2]+1];m=k.match(/^e5_(\d+)$/);return m?[5,+m[1]]:[9,0]}
+function draw(){
+ const E=Object.entries(data).sort((a,b)=>(b[1].started||0)-(a[1].started||0));
+ const c={testing:0,done:0,left:0};E.forEach(([,v])=>c[v.status]=(c[v.status]||0)+1);
+ $('#sum').innerHTML='';
+ [['Всего',E.length],['Проходят',c.testing],['Сдали',c.done],['Вышли',c.left]].forEach(([a,b])=>{const d=document.createElement('div');d.className='mu';d.textContent=a;const n=document.createElement('b');n.textContent=b;n.style.color='var(--tx)';d.prepend(n);$('#sum').append(d)});
+ const list=$('#list');list.innerHTML='';
+ if(!E.length){list.innerHTML='<p class="mu">Пока никто не начал тест.</p>';return}
+ E.forEach(([id,v])=>{
+  const r=document.createElement('div');r.className='row'+(open.has(id)?' open':'');
+  const tot=v.total||29,an=v.answered||0;
+  const top=document.createElement('div');top.className='top';
+  const n=document.createElement('span');n.className='nm';n.textContent=v.name||'—';
+  const t=document.createElement('span');t.className='tag t-'+v.status;t.textContent=L[v.status]||v.status;
+  const p=document.createElement('span');p.textContent='Отвечено: '+an+'/'+tot;
+  const sc=document.createElement('b');sc.textContent=v.status==='done'||v.status==='left'&&v.score===0?'Балл: '+(v.score||0)+'/'+tot+' ('+(v.percent||0)+'%)':'';
+  const a=document.createElement('span');a.className='mu';a.textContent=ago(v.updated);
+  top.append(n,t,p,sc,a);
+  const pb=document.createElement('div');pb.className='pb';pb.innerHTML='<i></i>';pb.firstChild.style.width=Math.min(100,an/tot*100)+'%';
+  const det=document.createElement('div');det.className='det';
+  const A=Object.entries(v.answers||{}).sort((x,y)=>{const a=lab(x[0]),b=lab(y[0]);return a[0]-b[0]||a[1]-b[1]});
+  if(!A.length)det.textContent=v.status==='left'?'Ответы удалены (ученик вышел из теста).':'Ответов пока нет.';
+  A.forEach(([k,val])=>{const d=document.createElement('div'),l=lab(k),b=document.createElement('b');b.textContent='Ex'+l[0]+'.'+l[1];d.append(b,document.createTextNode(val));det.append(d)});
+  r.append(top,pb,det);
+  r.onclick=()=>{open.has(id)?open.delete(id):open.add(id);r.classList.toggle('open')};
+  list.append(r)});
+}
+try{
+ firebase.initializeApp(FIREBASE_CONFIG);const db=firebase.database();
+ db.ref('.info/serverTimeOffset').on('value',s=>off=s.val()||0);
+ db.ref('sessions').on('value',s=>{data=s.val()||{};$('#st').textContent='● Онлайн, обновляется автоматически';draw()},()=>$('#st').textContent='Нет доступа к базе: проверьте правила (Rules) в Firebase');
+ $('#clr').onclick=()=>{if(confirm('Удалить результаты всех учеников?'))db.ref('sessions').remove()};
+ setInterval(draw,15000);
+}catch(e){$('#st').textContent='Заполните config.js данными из Firebase'}
+</script></body></html>
